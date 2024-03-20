@@ -1,3 +1,4 @@
+
 #include <MD_Parola.h>
 #include <MD_MAX72xx.h>
 #include <WiFi.h>
@@ -16,7 +17,7 @@ MD_Parola P = MD_Parola(HARDWARE_TYPE, DATA_PIN, CLK_PIN, CS_PIN, MAX_DEVICES);
 
 const char* ssid = "itecknologi";
 const char* password = "Iteck#@#7831";
-const char* url = "http://192.168.21.14:8080/parola.php"; // Change this to your URL
+const char* url = "http://192.168.21.126:8080/parola.php"; // Change this to your URL
 
 void setup() {
   Serial.begin(9600);
@@ -50,11 +51,20 @@ void loop() {
       String payload = http.getString(); // Get the response payload
       Serial.println(payload);
       // Display the fetched string on the MAX7219 display
-      P.setFont(0, BigFontBottom);
-      P.setFont(1, BigFontUp);
-      P.displayZoneText(0, payload.c_str(), PA_CENTER, 30, 0, PA_SCROLL_LEFT, PA_SCROLL_LEFT);
-      P.displayZoneText(1, payload.c_str(), PA_CENTER, 30, 0, PA_SCROLL_LEFT, PA_SCROLL_LEFT);
-      P.synchZoneStart();
+//      P.setFont(0, BigFontBottom);
+//      P.setFont(1, BigFontUp);
+//      P.displayZoneText(0, payload.c_str(), PA_CENTER, 30, 0, PA_SCROLL_LEFT, PA_SCROLL_LEFT);
+//      P.displayZoneText(1, payload.c_str(), PA_CENTER, 30, 0, PA_SCROLL_LEFT, PA_SCROLL_LEFT);
+//      P.synchZoneStart();
+       int halfLength = payload.length() / 2;
+      String halfPayload1 = payload.substring(0, halfLength);
+      String halfPayload2 = payload.substring(halfLength);
+          P.setFont(0, NULL);
+          P.setFont(1, NULL);
+          P.displayZoneText(0, halfPayload2.c_str(), PA_CENTER, 60, 2000, PA_SCROLL_UP, PA_SCROLL_DOWN);
+          P.displayZoneText(1, halfPayload1.c_str(), PA_CENTER, 60, 2000, PA_SCROLL_DOWN, PA_SCROLL_UP);
+//           P.displayZoneText(0, halfPayload2.c_str(), PA_CENTER, 30);
+//           P.displayZoneText(1, halfPayload1.c_str(), PA_CENTER, 30);
       while (!P.getZoneStatus(0) || !P.getZoneStatus(1))
         P.displayAnimate(); // Animate until both zones finish displaying
     } else {
